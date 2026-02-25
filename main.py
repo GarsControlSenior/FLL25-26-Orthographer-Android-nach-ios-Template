@@ -17,7 +17,7 @@ class OrtographerApp(App):
         self.sm.add_widget(self.home)
 
         if platform == "android":
-            Clock.schedule_once(self.ask_permission, 1)
+            Clock.schedule_once(self.ask_permission, 0.8)
 
         return self.sm
 
@@ -31,9 +31,9 @@ class OrtographerApp(App):
 
     def permission_callback(self, permissions, grants):
         if all(grants):
-            self.home.status = "✅ Camera permission granted"
+            self.home.status = "Camera permission granted"
         else:
-            self.home.status = "❌ Camera permission denied"
+            self.home.status = "Camera permission denied"
 
 
 if __name__ == "__main__":
