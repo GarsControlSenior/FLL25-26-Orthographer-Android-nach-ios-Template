@@ -2,10 +2,12 @@
 
 title = Ortographer
 package.name = ortographer
-package.domain = org.fll
+package.domain = org.test
 
 source.dir = .
 source.include_exts = py,kv,png,jpg,json
+
+version = 1.0.0
 
 requirements = python3,kivy,pyjnius,bleak,opencv-python,numpy
 
