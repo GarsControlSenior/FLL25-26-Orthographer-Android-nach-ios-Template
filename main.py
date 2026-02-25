@@ -1,42 +1,60 @@
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.properties import StringProperty
+from kivy.properties import NumericProperty, StringProperty
 from kivy.clock import Clock
 from kivy.utils import platform
 
-# Android Permission Import
+from ble_manager import BLEManager
+from sensor_manager import SensorManager
+from storage_manager import StorageManager
+from camera_manager import CameraManager
+from opencv_processor import OpenCVProcessor
+
 if platform == "android":
     from android.permissions import request_permissions, Permission
 
-
 class HomeScreen(Screen):
-    status = StringProperty("Permission not requested")
+    pass
+
+class CameraScreen(Screen):
+    pass
+
+class StorageScreen(Screen):
+    pass
 
 
 class OrtographerApp(App):
 
+    heading = NumericProperty(0)
+    ble_status = StringProperty("Disconnected")
+
     def build(self):
-        self.sm = ScreenManager()
-        self.home = HomeScreen(name="home")
-        self.sm.add_widget(self.home)
 
-        # Permission erst nach Start der Activity anfragen
         if platform == "android":
-            Clock.schedule_once(self.request_android_permissions, 1)
+            request_permissions([
+                Permission.BLUETOOTH_SCAN,
+                Permission.BLUETOOTH_CONNECT,
+                Permission.ACCESS_FINE_LOCATION,
+                Permission.CAMERA
+            ])
 
-        return self.sm
+        self.ble = BLEManager(self)
+        self.sensor = SensorManager(self)
+        self.storage = StorageManager()
+        self.camera = CameraManager()
+        self.processor = OpenCVProcessor()
 
-    def request_android_permissions(self, dt):
-        request_permissions(
-            [Permission.CAMERA],
-            self.permission_callback
-        )
+        sm = ScreenManager()
+        sm.add_widget(HomeScreen(name="home"))
+        sm.add_widget(CameraScreen(name="camera"))
+        sm.add_widget(StorageScreen(name="storage"))
 
-    def permission_callback(self, permissions, grants):
-        if all(grants):
-            self.home.status = "Camera Permission GRANTED"
-        else:
-            self.home.status = "Camera Permission DENIED"
+        Clock.schedule_interval(self.update_heading, 0.1)
+
+        return sm
+
+    def update_heading(self, dt):
+        self.heading = self.sensor.heading
 
 
 if __name__ == "__main__":
