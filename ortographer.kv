@@ -1,0 +1,49 @@
+<HomeScreen>:
+    BoxLayout:
+        orientation: "vertical"
+        padding: 20
+        spacing: 20
+
+        Label:
+            text: "Heading: " + str(round(app.heading, 1))
+
+        Label:
+            text: "BLE: " + app.ble_status
+
+        Button:
+            text: "Connect BLE"
+            on_press: app.ble.start_scan()
+
+        Button:
+            text: "Camera"
+            on_press: app.root.current = "camera"
+
+        Button:
+            text: "Storage"
+            on_press: app.root.current = "storage"
+
+
+<CameraScreen>:
+    BoxLayout:
+        orientation: "vertical"
+
+        Button:
+            text: "Capture"
+            on_press: app.camera.capture()
+
+        Button:
+            text: "Back"
+            on_press: app.root.current = "home"
+
+
+<StorageScreen>:
+    BoxLayout:
+        orientation: "vertical"
+
+        Button:
+            text: "Create Project"
+            on_press: app.storage.create_project("TestProject")
+
+        Button:
+            text: "Back"
+            on_press: app.root.current = "home"
